@@ -13,11 +13,13 @@ taken care of for you. This is the use case for many linux systems, and this lib
 is an initial attempt to get the two approaches to no step on each other.
 
 Example usage:
+
   Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__),:default, Rails.env)
 
 You may also want to wrap your call in some kind of check, to allow non-platform users
 (ie, mac, or any developer not installing as a sysadmin) to still use bunlder if they 
-want to.  One example woudl be to set an env var, something like:
+want to.  One example would be to set an env var, something like:
+
   export USE_BUNDLER=yes
 
 Then, if that is not set, look for a Gemfile, otherwise, load deps via Gemfile.in.
