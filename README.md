@@ -18,9 +18,9 @@ However, this is the use case for many linux systems, and this library
 is an initial attempt to get the two approaches to not step on each
 other.
 
-Example usage:
+### Example usage: ###
 
-  Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__),:default, Rails.env)
+    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__),:default, Rails.env)
 
 You may also want to wrap your call in some kind of check, to allow
 non-platform users (ie, mac, or any developer not installing as a
@@ -28,7 +28,7 @@ sysadmin) to still use bundler if they want to.  One example would be
 to simply change the name of the Gemfile for rpm setups, something
 like:
 
-  mv Gemfile Gemfile.in
+    mv Gemfile Gemfile.in
 
 Then, just look for a Gemfile, otherwise, load deps via
 Gemfile.in/BundlerExt.
