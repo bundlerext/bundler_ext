@@ -61,12 +61,10 @@ module Aeolus
         end
       end
       describe "#system_require" do
-        @wip
         it "should load the libraries in the gemfile" do
           BundlerExt.system_require(@gemfile)
           Object.const_defined?(:DeltaCloud).should be_true
         end
-	@wip
         it "should load the libraries in the gemfile" do
           BundlerExt.system_require(@gemfile, :fail)
 	  Object.const_defined?(:DeltaCloud).should be_true
