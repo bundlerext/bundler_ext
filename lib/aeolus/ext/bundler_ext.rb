@@ -25,8 +25,8 @@ module  Aeolus
         g = Bundler::Dsl.evaluate(gemfile,'foo',true)
         list = []
         g.dependencies.each { |dep|
-	  next unless ((groups & dep.groups).any? && dep.current_platform?)
-	  Array(dep.autorequire || dep.name).each do |file|
+          next unless ((groups & dep.groups).any? && dep.current_platform?)
+          Array(dep.autorequire || dep.name).each do |file|
             list << file
           end
         }
@@ -34,10 +34,10 @@ module  Aeolus
       end
       def self.system_require(gemfile,*groups)
         BundlerExt.parse_from_gemfile(gemfile,*groups).each do |dep|
-	  #This part ripped wholesale from lib/bundler/runtime.rb (github/master)
-	  begin
+          #This part ripped wholesale from lib/bundler/runtime.rb (github/master)
+          begin
             #puts "Attempting to require #{dep}"
-	    require dep
+            require dep
           rescue LoadError => e
             #puts "Caught error: #{e.message}"
             if dep.include?('-')
