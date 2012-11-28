@@ -1,12 +1,19 @@
 source :rubygems
 
+# only this really need to be present on the system
+gem 'rubygems'
+
+# non exising gem must be ordered as second gem
+gem 'not_existing_gem', :group => :fail
+
+# all the others are not required to have passing tests
 gem 'deltacloud-client', :require => 'deltacloud'
 gem 'will_paginate', '>= 3.0.pre1'
 gem 'fastercsv' , :platforms => :mri_18
 gem 'cinch' , :platforms => :mri_19
-gem 'foo', :group => :fail
+
 group :development, :test do
-  gem 'rspec-rails'
+  gem 'rubygems-command'
   gem 'vcr'
   gem 'webmock'
   gem 'launchy'

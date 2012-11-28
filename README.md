@@ -18,9 +18,21 @@ However, this is the use case for many linux systems, and this library
 is an initial attempt to get the two approaches to not step on each
 other.
 
-### Example usage: ###
+### Example usage ###
 
-    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__),:default, Rails.env)
+If you want to load ALL Gemfile groups, use the following statement:
+
+    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :all)
+
+When you want to load only the default one, use:
+
+    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default)
+
+You can provide multiple parameters to the system_require function
+of course. Finally, you will be likely requiring default group and
+group named as the current Rails environment; use this:
+    
+    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default, Rails.env)
 
 You may also want to wrap your call in some kind of check, to allow
 non-platform users (ie, mac, or any developer not installing as a
@@ -41,3 +53,27 @@ all, so for now at least, it is safer to just look for a different
 file (and this is easily scripted as well) In the linux deployment
 case, this is not the desired behavior, we explicitly want to say
 'just use what the package manager has installed'.
+
+### Additional configuration ###
+
+There are special environment variables you can use. You may need to 
+insert additional groups to be required, e.g. when developing and you
+want to restart the system in development mode once. Use 
+BUNDLER_EXT_GROUPS variable (separate with whitespace):
+
+    BUNDLER_EXT_GROUPS="group1 group2 group3" rails server ...
+
+Also, by default bundler_ext raises an error when dependency cannot
+be loaded. You can turn off this behavior (e.g. for installers when
+you want to do rake db:migrate) with setting BUNDLER_EXT_NOSTRICT:
+
+    BUNDLER_EXT_NOSTRICT=1 rake db:migrate ...
+
+In this mode bundler_ext prints out error messages on the stdout, 
+but does not terminate the process.
+
+Some rubygems require HOME environment variable to be set, threfore
+not running daemonized. For this purposes there is BUNDLER_EXT_HOME
+variable which can be used to set HOME environment variable before
+any rubygem gets loaded. The variable is not exported for
+subprocesses.
