@@ -14,4 +14,4 @@
 #   limitations under the License.
 #
 #require File.expand_path("../../bundler_ext", __FILE__)
-require 'aeolus/ext'
+require 'bundler_ext/bundler_ext'
