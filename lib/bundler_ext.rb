@@ -14,5 +14,4 @@
 #   limitations under the License.
 #
 #
-
-require File.join(File.dirname(__FILE__), 'ext', 'bundler_ext')
+require 'bundler_ext/bundler_ext'
