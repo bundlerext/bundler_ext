@@ -1,10 +1,10 @@
 $LOAD_PATH.push File.expand_path("lib")
-require 'aeolus/ext/version'
+require 'bundler_ext/version'
 
 
 Gem::Specification.new do |s|
   s.name        = "bundler_ext"
-  s.version     = Aeolus::Ext::VERSION
+  s.version     = BundlerExt::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jason Guiditta"]
   s.email       = ["aeolus-devel@lists.fedorahosted.org, jguiditt@redhat.com"]

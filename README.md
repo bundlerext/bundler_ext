@@ -22,17 +22,17 @@ other.
 
 If you want to load ALL Gemfile groups, use the following statement:
 
-    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :all)
+    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :all)
 
 When you want to load only the default one, use:
 
-    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default)
+    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default)
 
 You can provide multiple parameters to the system_require function
 of course. Finally, you will be likely requiring default group and
 group named as the current Rails environment; use this:
     
-    Aeolus::Ext::BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default, Rails.env)
+    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default, Rails.env)
 
 You may also want to wrap your call in some kind of check, to allow
 non-platform users (ie, mac, or any developer not installing as a
