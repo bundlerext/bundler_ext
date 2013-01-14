@@ -77,3 +77,9 @@ not running daemonized. For this purposes there is BUNDLER_EXT_HOME
 variable which can be used to set HOME environment variable before
 any rubygem gets loaded. The variable is not exported for
 subprocesses.
+
+### License  ###
+
+bundler_ext is licensed under the MIT Licence.
+
+* http://www.opensource.org/licenses/MIT
