@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = "Load system gems via Bundler DSL"
   s.description = "Simple library leveraging the Bundler Gemfile DSL to load gems already on the system and managed by the systems package manager (like yum/apt)"
   s.license     = 'MIT'
-  s.files       = Dir["lib/**/*.rb", "README.md", "MIT-LICENSE","Rakefile"]
+  s.files       = Dir["lib/**/*.rb", "README.md", "MIT-LICENSE","Rakefile","CHANGELOG"]
   s.test_files  = Dir["spec/**/*.*",".rspec"]
   s.require_path = 'lib'
 

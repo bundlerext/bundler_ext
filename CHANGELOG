@@ -1,0 +1,5 @@
+====== version 0.3.0 =========
+
+Jason Guiditta (2):
+      Flatten namespace, since this is now used outside of Aeolus project.
+      Change to MIT license and minor cleanups.
