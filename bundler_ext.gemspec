@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/aeolus-incubator/bundler_ext"
   s.summary     = "Load system gems via Bundler DSL"
   s.description = "Simple library leveraging the Bundler Gemfile DSL to load gems already on the system and managed by the systems package manager (like yum/apt)"
-  s.license = 'ASL 2.0'
-  s.files        = Dir["lib/**/*.rb", "README.md", "COPYING","Rakefile"]
+  s.license     = 'MIT'
+  s.files       = Dir["lib/**/*.rb", "README.md", "MIT-LICENSE","Rakefile"]
   s.test_files  = Dir["spec/**/*.*",".rspec"]
   s.require_path = 'lib'
 
