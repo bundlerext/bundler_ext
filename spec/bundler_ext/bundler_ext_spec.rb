@@ -72,6 +72,7 @@ require 'spec_helper'
       it "non-strict mode should load the libraries using env var list" do
         ENV['BUNDLER_EXT_GROUPS'] = 'test development blah'
         ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
+        BundlerExt.system_require(@gemfile)
         defined?(Gem::Command).should be_true
       end
     end
