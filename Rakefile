@@ -1,4 +1,3 @@
-#!/usr/bin/env rake
 begin
   require 'rspec/core/rake_task'
   require 'bundler'
