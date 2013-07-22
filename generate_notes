@@ -1,0 +1,3 @@
+git log $1..$2 --no-merges --pretty="%aN (%ad) %n - %h %s" \
+--date=short | cat - CHANGELOG > /tmp/out && 
+mv /tmp/out CHANGELOG
