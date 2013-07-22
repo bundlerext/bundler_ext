@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = BundlerExt::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jason Guiditta"]
-  s.email       = ["aeolus-devel@lists.fedorahosted.org, jguiditt@redhat.com"]
-  s.homepage    = "https://github.com/aeolus-incubator/bundler_ext"
+  s.email       = ["jguiditt@redhat.com"]
+  s.homepage    = "https://github.com/bundlerext/bundler_ext"
   s.summary     = "Load system gems via Bundler DSL"
   s.description = "Simple library leveraging the Bundler Gemfile DSL to load gems already on the system and managed by the systems package manager (like yum/apt)"
   s.license     = 'MIT'
