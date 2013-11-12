@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency "bundler"
+  s.requirements = ['Install the linux_admin gem and set BEXT_ACTIVATE_VERSIONS to true to activate rpm/deb installed gems']
 
   s.add_development_dependency('rspec', '>=1.3.0')
 end

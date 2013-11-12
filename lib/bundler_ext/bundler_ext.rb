@@ -12,15 +12,26 @@ class BundlerExt
     all_groups = true if groups.size == 1 and groups.include?(:all) and not extra_groups
     groups.map! { |g| g.to_sym }
     g = Bundler::Dsl.evaluate(gemfile,'foo',true)
-    list = []
+    deps = {}
     g.dependencies.each do |dep|
       if ((groups & dep.groups).any? || all_groups) && dep.current_platform?
+        files = []
         Array(dep.autorequire || dep.name).each do |file|
-          list << file
+          files << file
         end
+        deps[dep.name] = {:dep => dep, :files => files}
       end
     end
-    list
+    deps
+  end
+
+  def self.system_gem_name_for(name)
+    ENV['BEXT_PKG_PREFIX'] ||= ''
+    "#{ENV['BEXT_PKG_PREFIX']}#{name}"
+  end
+
+  def self.system_gem_version_for(name)
+    LinuxAdmin::Package.get_info(name)['version']
   end
 
   def self.strict_error(msg)
@@ -32,28 +43,50 @@ class BundlerExt
   end
 
   def self.system_require(gemfile,*groups)
-    BundlerExt.parse_from_gemfile(gemfile,*groups).each do |dep|
-      #This part ripped wholesale from lib/bundler/runtime.rb (github/master)
+    activate_versions = ENV['BEXT_ACTIVATE_VERSIONS']
+    if activate_versions
       begin
-        #puts "Attempting to require #{dep}"
-        require dep
-      rescue LoadError => e
-        #puts "Caught error: #{e.message}"
-        if dep.include?('-')
-          begin
-            if dep.respond_to? :name
-              namespaced_file = dep.name.gsub('-', '/')
-            else
-              # try to load unresolved deps
-              namespaced_file = dep.gsub('-', '/')
+        require "linux_admin"
+      rescue LoadError
+        puts "linux_admin not installed, cannot retrieve versions to activate"
+        activate_versions = false
+      end
+    end
+
+    BundlerExt.parse_from_gemfile(gemfile,*groups).each do |name,gdep|
+      # activate the dependency
+      if activate_versions
+        begin
+          sys_name = BundlerExt.system_gem_name_for(name)
+          version  = BundlerExt.system_gem_version_for(sys_name)
+          gem name, "=#{version}"
+        rescue LoadError, CommandResultError
+        end
+      end
+
+      gdep[:files].each do |dep|
+        #This part ripped wholesale from lib/bundler/runtime.rb (github/master)
+        begin
+          #puts "Attempting to require #{dep}"
+          require dep
+        rescue LoadError => e
+          #puts "Caught error: #{e.message}"
+          if dep.include?('-')
+            begin
+              if dep.respond_to? :name
+                namespaced_file = dep.name.gsub('-', '/')
+              else
+                # try to load unresolved deps
+                namespaced_file = dep.gsub('-', '/')
+              end
+              #puts "Munged the name, now trying to require as #{namespaced_file}"
+              require namespaced_file
+            rescue LoadError => e2
+              strict_error "Gem loading error: #{e2.message}"
             end
-            #puts "Munged the name, now trying to require as #{namespaced_file}"
-            require namespaced_file
-          rescue LoadError => e2
-            strict_error "Gem loading error: #{e2.message}"
+          else
+            strict_error "Gem loading error: #{e.message}"
           end
-        else
-          strict_error "Gem loading error: #{e.message}"
         end
       end
     end
