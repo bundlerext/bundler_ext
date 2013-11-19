@@ -59,21 +59,21 @@ case, this is not the desired behavior, we explicitly want to say
 There are special environment variables you can use. You may need to 
 insert additional groups to be required, e.g. when developing and you
 want to restart the system in development mode once. Use 
-BUNDLER_EXT_GROUPS variable (separate with whitespace):
+BEXT_GROUPS variable (separate with whitespace):
 
-    BUNDLER_EXT_GROUPS="group1 group2 group3" rails server ...
+    BEXT_GROUPS="group1 group2 group3" rails server ...
 
 Also, by default bundler_ext raises an error when dependency cannot
 be loaded. You can turn off this behavior (e.g. for installers when
-you want to do rake db:migrate) with setting BUNDLER_EXT_NOSTRICT:
+you want to do rake db:migrate) with setting BEXT_NOSTRICT:
 
-    BUNDLER_EXT_NOSTRICT=1 rake db:migrate ...
+    BEXT_NOSTRICT=1 rake db:migrate ...
 
 In this mode bundler_ext prints out error messages on the stdout, 
 but does not terminate the process.
 
 Some rubygems require HOME environment variable to be set, threfore
-not running daemonized. For this purposes there is BUNDLER_EXT_HOME
+not running daemonized. For this purposes there is BEXT_HOME
 variable which can be used to set HOME environment variable before
 any rubygem gets loaded. The variable is not exported for
 subprocesses.
