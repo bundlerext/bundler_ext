@@ -1,3 +1,10 @@
+====== version 0.3.2 =========
+
+Mo Morsi (2013-11-19) 
+ - 12b79e0 Shorten default ENV variable names to 'BEXT'
+Mo Morsi (2013-11-12) 
+ - ad57f28 Lookup and activate versions of system installed gems
+
 ====== version 0.3.1 =========
 
 Jason Guiditta (2013-07-22) 
