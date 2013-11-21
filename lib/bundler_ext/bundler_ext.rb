@@ -1,12 +1,14 @@
 require "bundler"
 
 # some rubygems does not play well with daemonized processes ($HOME is empty)
+ENV['HOME'] = ENV['BEXT_HOME']        if ENV['BEXT_HOME']
 ENV['HOME'] = ENV['BUNDLER_EXT_HOME'] if ENV['BUNDLER_EXT_HOME']
 
 class BundlerExt
   def self.parse_from_gemfile(gemfile,*groups)
     ENV['BUNDLE_GEMFILE'] = gemfile
     extra_groups = ENV['BUNDLER_EXT_GROUPS']
+    extra_groups = ENV['BEXT_GROUPS'] || ENV['BUNDLER_EXT_GROUPS']
     extra_groups.split(/\s/).each {|g| groups << g.to_sym} if extra_groups
     all_groups = false
     all_groups = true if groups.size == 1 and groups.include?(:all) and not extra_groups
@@ -35,7 +37,7 @@ class BundlerExt
   end
 
   def self.strict_error(msg)
-    if ENV['BUNDLER_EXT_NOSTRICT']
+    if ENV['BEXT_NOSTRICT'] || ENV['BUNDLER_EXT_NOSTRICT']
       puts msg
     else
       raise msg

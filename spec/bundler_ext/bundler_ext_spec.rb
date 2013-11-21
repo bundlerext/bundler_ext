@@ -13,11 +13,11 @@ end
       @gemfile = 'spec/fixtures/Gemfile.in'
     end
     after(:each) do
-      ENV['BUNDLER_EXT_NOSTRICT'] = nil
-      ENV['BUNDLER_EXT_GROUPS'] = nil
       ENV['BUNDLER_PKG_PREFIX'] = nil
       ENV['BEXT_ACTIVATE_VERSIONS'] = nil
       ENV['BEXT_PKG_PREFIX'] = nil
+      ENV['BEXT_NOSTRICT'] = nil
+      ENV['BEXT_GROUPS'] = nil
     end
 
     describe "#parse_from_gemfile" do
@@ -71,19 +71,40 @@ end
       it "strict mode should fail loading non existing gem" do
         expect { BundlerExt.system_require(@gemfile, :fail) }.to raise_error
       end
+
+      it "non-strict mode should load the libraries in the gemfile" do
+        ENV['BEXT_NOSTRICT'] = 'true'
+        BundlerExt.system_require(@gemfile)
+        defined?(Gem).should be_true
+      end
+
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
         defined?(Gem).should be_true
       end
+
+      it "non-strict mode should load the libraries in the gemfile" do
+        ENV['BEXT_NOSTRICT'] = 'true'
+        BundlerExt.system_require(@gemfile, :fail)
+        defined?(Gem).should be_true
+      end
+
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile, :fail)
         defined?(Gem).should be_true
       end
       it "non-strict mode should load the libraries using env var list" do
-        ENV['BUNDLER_EXT_GROUPS'] = 'test development blah'
-        ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
+        ENV['BEXT_GROUPS'] = 'test development blah'
+        ENV['BEXT_NOSTRICT'] = 'true'
+        BundlerExt.system_require(@gemfile)
+        defined?(Gem::Command).should be_true
+      end
+
+      it "non-strict mode should load the libraries using env var list" do
+        ENV['BUNLDER_EXT_GROUPS'] = 'test development blah'
+        ENV['BEXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
         defined?(Gem::Command).should be_true
       end
