@@ -35,7 +35,7 @@ module BundlerExt
     def self.parse(gemfile, *groups)
       setup_env(gemfile)
       env = self.parse_env(groups)
-      gemfile = Bundler::Dsl.evaluate(gemfile,'foo',true)
+      gemfile = Bundler::Dsl.evaluate(gemfile, nil, true)
       process(gemfile, env)
     end
   end
