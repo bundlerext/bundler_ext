@@ -23,7 +23,7 @@ end
     describe "#parse_from_gemfile" do
       describe "with no group passed in" do
         it "should return nothing to require" do
-          libs = BundlerExt.parse_from_gemfile(@gemfile)
+          libs = BundlerExt::Gemfile.parse(@gemfile)
           libs.should be_an(Hash)
           libs.keys.should_not include('deltacloud-client')
           libs.keys.should_not include('vcr')
@@ -31,7 +31,7 @@ end
       end
       describe "with :all passed in" do
         it "should return the list of system libraries in all groups to require" do
-          libs = BundlerExt.parse_from_gemfile(@gemfile, :all)
+          libs = BundlerExt::Gemfile.parse(@gemfile, :all)
           libs.should be_an(Hash)
           libs.keys.should include('deltacloud-client')
           libs['deltacloud-client'][:files].should == ['deltacloud']
@@ -40,25 +40,25 @@ end
       end
       describe "with group passed in" do
         it "should not return any deps that are not in the 'development' group" do
-          libs = BundlerExt.parse_from_gemfile(@gemfile,'development')
+          libs = BundlerExt::Gemfile.parse(@gemfile,'development')
           libs.should be_an(Hash)
           libs.keys.should_not include('deltacloud-client')
         end
         it "should return only deps that are in the :test group" do
-          libs = BundlerExt.parse_from_gemfile(@gemfile, :test)
+          libs = BundlerExt::Gemfile.parse(@gemfile, :test)
           libs.should be_an(Hash)
           libs.keys.should_not include('deltacloud-client')
           libs.keys.should include('vcr')
         end
         it "should return deps from both the :default and :test groups" do
-          libs = BundlerExt.parse_from_gemfile(@gemfile, :default, :test)
+          libs = BundlerExt::Gemfile.parse(@gemfile, :default, :test)
           libs.should be_an(Hash)
           libs.keys.should include('deltacloud-client')
           libs.keys.should include('vcr')
         end
       end
       it "should only return deps for the current platform" do
-        libs = BundlerExt.parse_from_gemfile(@gemfile)
+        libs = BundlerExt::Gemfile.parse(@gemfile)
         libs.should be_an(Hash)
         if RUBY_VERSION < "1.9"
           libs.keys.should_not include('cinch')
@@ -117,14 +117,14 @@ end
           end
 
           it "activates the version of the system installed package" do
-            gems = BundlerExt.parse_from_gemfile(@gemfile, :all)
+            gems = BundlerExt::Gemfile.parse(@gemfile, :all)
             gems.each { |gem,gdep|
               version = rand(100)
-              BundlerExt.should_receive(:system_gem_name_for).with(gem).
+              BundlerExt::System.should_receive(:system_name_for).with(gem).
                          and_return(gem)
-              BundlerExt.should_receive(:system_gem_version_for).with(gem).
+              BundlerExt::System.should_receive(:system_version_for).with(gem).
                          and_return(version)
-              BundlerExt.should_receive(:gem).with(gem, "=#{version}")
+              BundlerExt::System.should_receive(:gem).with(gem, "=#{version}")
             }
             BundlerExt.system_require(@gemfile, :all)
           end
@@ -132,7 +132,7 @@ end
           context "ENV['BEXT_PKG_PREFIX'] is specified" do
             it "prepends bundler pkg prefix onto system package name to load" do
               ENV['BEXT_PKG_PREFIX'] = 'rubygem-'
-              gems = BundlerExt.parse_from_gemfile(@gemfile, :all)
+              gems = BundlerExt::Gemfile.parse(@gemfile, :all)
               gems.each { |gem,gdep|
                 BundlerExt.should_receive(:system_gem_version_for).with("rubygem-#{gem}").
                            and_return('0')
