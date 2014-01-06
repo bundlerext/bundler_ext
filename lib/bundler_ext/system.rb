@@ -12,15 +12,8 @@ module BundlerExt
 
     def self.activate?
       parse_env
-      return @activate_enabled = false unless @activate_versions
-
-      begin
-        require "linux_admin"
-      rescue LoadError
-        puts "linux_admin not installed, cannot retrieve versions to activate"
-        return @activate_enabled = false
-      end
-
+      return @activate_enabled = false unless @activate_versions &&
+                                              File.exists?(rpm_cmd)
       @activate_enabled = true
     end
 
@@ -29,9 +22,27 @@ module BundlerExt
       "#{@pkg_prefix}#{name}"
     end
 
+    def self.is_rpm_system?
+      File.executable?('/usr/bin/rpm')
+    end
+
+    def self.rpm_cmd(new_val=nil)
+      @rpm_cmd ||= '/usr/bin/rpm'
+      @rpm_cmd   = new_val unless new_val.nil?
+      @rpm_cmd
+    end
+
     def self.system_version_for(name)
-      # TODO replace this w/ direct call to rpm/deb
-      LinuxAdmin::Package.info(name)['version']
+      if is_rpm_system?
+        out = `#{rpm_cmd} -qi #{name}`
+        version = out =~ /.*Version\s*:\s*([^\s]*)\s+.*/ ?
+          $1 : nil
+      else
+        # TODO support debian, other platforms
+        version = nil
+      end
+
+      version
     end
 
     def self.activate!(name)

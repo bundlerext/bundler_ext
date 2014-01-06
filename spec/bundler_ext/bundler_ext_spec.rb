@@ -134,7 +134,7 @@ end
               ENV['BEXT_PKG_PREFIX'] = 'rubygem-'
               gems = BundlerExt::Gemfile.parse(@gemfile, :all)
               gems.each { |gem,gdep|
-                BundlerExt.should_receive(:system_gem_version_for).with("rubygem-#{gem}").
+                BundlerExt::System.should_receive(:system_version_for).with("rubygem-#{gem}").
                            and_return('0')
               }
               BundlerExt.system_require(@gemfile, :all)
