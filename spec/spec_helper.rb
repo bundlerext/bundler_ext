@@ -1,1 +1,1 @@
-require 'bundler_ext/bundler_ext'
+require 'bundler_ext'
