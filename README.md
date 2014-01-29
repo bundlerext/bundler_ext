@@ -2,75 +2,73 @@ bundler_ext
 ===========
 
 Simple library leveraging the Bundler Gemfile DSL to load gems already
-on the system and managed by the systems package manager
-(like yum/apt).
+on the system and those managed by the systems package manager
+(like yum/apt/homebrew/other).
 
-The purpose of this library is to allow, for instance, yum and rpm to
-manage the dependencies for a project, and simply reuse the Gemfile
-to get the list of directly required gems for (in initial use case) a
-Rails 3.x application. It would be useful in such cases for there to
-be a big switch in Bundler that would allow the user to tell it 'You
-are allevaiated of the responsibility of resolving dependencies, that
-has been taken care of for you. Understandably, since Bundler's
-primary goal is exactly to resolve those dependencies, that project
-has to date not been interested in supporting such functionality.
-However, this is the use case for many linux systems, and this library
-is an initial attempt to get the two approaches to not step on each
-other.
+### API ###
 
-### Example usage ###
+- BundlerExt#system_require is analogous to
+  [Bundler#require](http://rubydoc.info/github/bundler/bundler/Bundler#require-class_method)
+  and will auto-require the gems loaded in the Gemfile wherever they
+  are installed / can be found.
+  
+  
+- BundlerExt#system_setup is analogous to
+  [Bundler#setup](http://bundler.io/v1.5/bundler_setup.html)
+  and will setup the Ruby LOAD_PATH to only incorporate the gemfile
+  dependency include paths wherever they are installed.
+  
 
-If you want to load ALL Gemfile groups, use the following statement:
+- If either case if the BEXT_ACTIVATE_VERSIONS env var is set true,
+  the specific versions of the gem installed via yum/apt/other will be
+  detected and activated.
 
-    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :all)
+- Specify the BEXT_GROUPS env var to insert additional groups to be loaded
+  (separated by whitespace, eg BEXT_GROUPS='group1 group2 ...')
 
-When you want to load only the default one, use:
+- Specify BEXT_NOSTRICT to disable fail-on-error, otherwise BundlerExt will
+  raise a critical error if a dependency fails to load. If set true, BundlerExt
+  will simply print the msg to stdout and continue on.
 
-    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default)
+### Show Me The Code! ##
 
-You can provide multiple parameters to the system_require function
-of course. Finally, you will be likely requiring default group and
-group named as the current Rails environment; use this:
+Assuming gemfile_in is defined as
+
+    gemfile_in = File.expand_path('../../Gemfile.in', __FILE__)
+
+To load & require ALL Gemfile groups, use the following statement:
+
+    BundlerExt.system_require(gemfile_in, :all)
+
+To load only the default one, use:
+
+    BundlerExt.system_require(gemfile_in, :default)
+
+BundlerExt#system_require function takes a list of parameters corresponding to all the
+environments the invoker intends to use.
+
+To require the default group and the group specified
+by the Rails environment, use:
     
-    BundlerExt.system_require(File.expand_path('../../Gemfile.in', __FILE__), :default, Rails.env)
+    BundlerExt.system_require(gemfile_in, :default, Rails.env)
 
-You may also want to wrap your call in some kind of check, to allow
-non-platform users (ie, mac, or any developer not installing as a
-sysadmin) to still use bundler if they want to.  One example would be
-to simply change the name of the Gemfile for rpm setups, something
-like:
+To setup the LOAD_PATH to only reference the default Gemfile deps:
+
+    BundlerExt.system_setup(gemfile_in, :default)
+
+And so on....
+
+### Other Considerations ###
+
+You may want to wrap your call in some kind of check, to allow
+non-platform users to still use bundler if they want to.
+
+One way to accomplish this would be to simply change the name of
+the Gemfile for native package system scenarios, eg
 
     mv Gemfile Gemfile.in
 
-Then, just look for a Gemfile, otherwise, load deps via
-Gemfile.in/BundlerExt.
-
-Note there is a reason for the 2 files names (for now at least) -
-Some libraries, like Rspec, Cucumber, and Rails, try to be smart and
-load up dependencies via Bundler themselves if they see a Gemfile in
-the working directory.  In some cases this can be overriden, but not
-all, so for now at least, it is safer to just look for a different
-file (and this is easily scripted as well) In the linux deployment
-case, this is not the desired behavior, we explicitly want to say
-'just use what the package manager has installed'.
-
-### Additional configuration ###
-
-There are special environment variables you can use. You may need to 
-insert additional groups to be required, e.g. when developing and you
-want to restart the system in development mode once. Use 
-BEXT_GROUPS variable (separate with whitespace):
-
-    BEXT_GROUPS="group1 group2 group3" rails server ...
-
-Also, by default bundler_ext raises an error when dependency cannot
-be loaded. You can turn off this behavior (e.g. for installers when
-you want to do rake db:migrate) with setting BEXT_NOSTRICT:
-
-    BEXT_NOSTRICT=1 rake db:migrate ...
-
-In this mode bundler_ext prints out error messages on the stdout, 
-but does not terminate the process.
+Then, just look for a Gemfile, otherwise, load deps via Gemfile.in/BundlerExt.
 
 Some rubygems require HOME environment variable to be set, threfore
 not running daemonized. For this purposes there is BEXT_HOME
