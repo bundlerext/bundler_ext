@@ -27,30 +27,27 @@ module BundlerExt
       ENV['HOME'] = ENV['BUNDLER_EXT_HOME'] if ENV['BUNDLER_EXT_HOME']
     end
 
+    # Helper to generate, taken from bundler_ext
+    def self.namespaced_file(file)
+      return nil unless file.to_s.include?('-')
+      file.respond_to?(:name) ? file.name.gsub('-', '/') : file.to_s.gsub('-', '/')
+    end
+
     def system_require(files)
       files.each do |dep|
-        #This part ripped wholesale from lib/bundler/runtime.rb (github/master)
+        # this part also take from lib/bundler/runtime.rb (github/master)
         begin
           #puts "Attempting to require #{dep}"
           require dep
         rescue LoadError => e
-          #puts "Caught error: #{e.message}"
-          if dep.include?('-')
-            begin
-              if dep.respond_to? :name
-                namespaced_file = dep.name.gsub('-', '/')
-              else
-                # try to load unresolved deps
-                namespaced_file = dep.gsub('-', '/')
-              end
-              #puts "Munged the name, now trying to require as #{namespaced_file}"
-              require namespaced_file
-            rescue LoadError => e2
-              Output.strict_err "Gem loading error: #{e2.message}"
-            end
-          else
-            Output.strict_err "Gem loading error: #{e.message}"
+          namespaced_file = self.class.namespaced_file(dep)
+          begin
+            require namespaced_file unless namespaced_file.nil?
+          rescue LoadError => e2
+            e = e2
           end
+
+          Output.strict_err "Gem loading error: #{e.message}"
         end
       end
     end
