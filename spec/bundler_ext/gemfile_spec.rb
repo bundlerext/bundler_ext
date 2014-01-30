@@ -65,7 +65,7 @@ module BundlerExt
 
     describe "#dependency_in_env?" do
       before(:each) do
-        @dep = Bundler::Dependency.new 'rake', '1.0.0', :groups => [:test]
+        @dep = Bundler::Dependency.new 'rake', '1.0.0', 'group' => [:test]
         @env = {:groups => []}
       end
 
@@ -105,27 +105,77 @@ module BundlerExt
 
     describe "#files_for_dependency" do
       context "dependency in env" do
-        it("returns dependency autorequires")
+        it "returns dependency autorequires" do
+          dep = Bundler::Dependency.new 'rake', '1.0.0', 'require' => [:foo]
+          described_class.should_receive(:dependency_in_env?).and_return(true)
+          described_class.files_for_dependency(dep, {}).should == [:foo]
+        end
+
         context "autorequires is nil" do
-          it("returns depenency name")
+          it("returns depenency name") do
+            dep = Bundler::Dependency.new 'rake', '1.0.0'
+            described_class.should_receive(:dependency_in_env?).and_return(true)
+            described_class.files_for_dependency(dep, {}).should == ['rake']
+          end
         end
       end
 
       context "dependency not in env" do
-        it "returns empty array"
+        it "returns empty array" do
+          dep = Bundler::Dependency.new 'rake', '1.0.0'
+          described_class.should_receive(:dependency_in_env?).and_return(false)
+          described_class.files_for_dependency(dep, {}).should == []
+        end
       end
     end
 
     describe "#process" do
-      it "returns gemfile dependencies with files"
-      it "does not return gemfile dependencies without files"
+      before(:each) do
+        @dep = Bundler::Dependency.new 'rake', '1.0.0'
+        @gemfile = Bundler::Dsl.evaluate 'spec/fixtures/Gemfile.in', nil, true
+        @gemfile.should_receive(:dependencies).and_return([@dep])
+      end
+
+      it "returns gemfile dependencies with files" do
+        described_class.should_receive(:files_for_dependency).and_return([:files])
+        described_class.process(@gemfile, {}).should ==
+          {'rake' => {:dep => @dep, :files => [:files]}}
+      end
+
+      it "does not return gemfile dependencies without files" do
+        described_class.should_receive(:files_for_dependency).and_return([])
+        described_class.process(@gemfile, {}).should == {}
+      end
     end
 
     describe "#parse" do
-      it "sets up env for gemfile"
-      it "retrieves env configured by gemfile"
-      it "evaluates gemfile with bundler dsl"
-      it "processes gemfile / returns results"
+      before(:each) do
+        @gemfile = 'spec/fixtures/Gemfile.in'
+      end
+
+      it "sets up env for gemfile" do
+        described_class.should_receive(:setup_env).with(@gemfile)
+        described_class.parse(@gemfile)
+      end
+
+      it "retrieves env configured by gemfile" do
+        described_class.should_receive(:parse_env).with([:test]).and_call_original
+        described_class.parse(@gemfile, :test)
+      end
+
+      it "evaluates gemfile with bundler dsl" do
+        Bundler::Dsl.should_receive(:evaluate).with(@gemfile, nil, true).and_call_original
+        described_class.parse(@gemfile, :test)
+      end
+
+      it "processes gemfile / returns results" do
+        env = Object.new
+        gemfile = Object.new
+        described_class.should_receive(:parse_env).and_return(env)
+        Bundler::Dsl.should_receive(:evaluate).and_return(gemfile)
+        described_class.should_receive(:process).with(gemfile, env)
+        described_class.parse(@gemfile, :test)
+      end
     end
   end # describe Gemfile
 end # module BundlerExt
