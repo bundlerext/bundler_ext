@@ -131,9 +131,14 @@ module BundlerExt
 
     describe "#process" do
       before(:each) do
+        ENV['BUNDLE_GEMFILE'] = 'spec/fixtures/Gemfile.in'
         @dep = Bundler::Dependency.new 'rake', '1.0.0'
         @gemfile = Bundler::Dsl.evaluate 'spec/fixtures/Gemfile.in', nil, true
         @gemfile.should_receive(:dependencies).and_return([@dep])
+      end
+
+      after(:each) do
+        ENV.delete('BUNDLE_GEMFILE')
       end
 
       it "returns gemfile dependencies with files" do
@@ -151,6 +156,11 @@ module BundlerExt
     describe "#parse" do
       before(:each) do
         @gemfile = 'spec/fixtures/Gemfile.in'
+        ENV['BUNDLE_GEMFILE'] = @gemfile
+      end
+
+      after(:each) do
+        ENV.delete('BUNDLE_GEMFILE')
       end
 
       it "sets up env for gemfile" do
