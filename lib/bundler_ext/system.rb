@@ -5,16 +5,20 @@ Gem::Requirement::BadRequirementError = ArgumentError if RUBY_VERSION < '2'
 
 module BundlerExt
   class System
+    class << self
+      attr_accessor :pkg_prefix
+      attr_accessor :activate_versions
+    end
+
     def self.parse_env
-      @pkg_prefix = ENV['BEXT_PKG_PREFIX'] || ''
+      @pkg_prefix        = ENV['BEXT_PKG_PREFIX'] || ''
       @activate_versions = ENV['BEXT_ACTIVATE_VERSIONS']
     end
 
     def self.activate?
       parse_env
-      return @activate_enabled = false unless @activate_versions &&
-                                              File.exists?(rpm_cmd)
-      @activate_enabled = true
+      # TODO support other package system activations, eg deb, homebrew, etc
+      @activate_versions && self.is_rpm_system?
     end
 
     def self.system_name_for(name)
@@ -23,7 +27,7 @@ module BundlerExt
     end
 
     def self.is_rpm_system?
-      File.executable?('/usr/bin/rpm')
+      File.executable?(self.rpm_cmd)
     end
 
     def self.rpm_cmd(new_val=nil)
