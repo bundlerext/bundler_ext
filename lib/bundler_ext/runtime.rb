@@ -37,17 +37,20 @@ module BundlerExt
       files.each do |dep|
         # this part also take from lib/bundler/runtime.rb (github/master)
         begin
-          #puts "Attempting to require #{dep}"
+          Output.verbose_msg "Attempting to require #{dep}"
           require dep
-        rescue LoadError => e
-          namespaced_file = self.class.namespaced_file(dep)
+        rescue LoadError => err_regular
           begin
-            require namespaced_file unless namespaced_file.nil?
-          rescue LoadError => e2
-            e = e2
+            namespaced_file = self.class.namespaced_file(dep)
+            if namespaced_file.nil?
+              Output.strict_err "Gem loading error: #{err_regular.message}"
+            else
+              Output.verbose_msg "Attempting to require #{namespaced_file}"
+              require namespaced_file
+            end
+          rescue LoadError => err_namespaced
+            Output.strict_err "Gem loading error: #{err_namespaced.message}"
           end
-
-          Output.strict_err "Gem loading error: #{e.message}"
         end
       end
     end
