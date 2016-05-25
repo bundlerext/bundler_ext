@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "bundler_ext"
   s.version     = BundlerExt::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Jason Guiditta"]
-  s.email       = ["jguiditt@redhat.com"]
+  s.authors     = ["Jason Guiditta", "Mo Morsi", "Lukas Zapletal"]
+  s.email       = ["mmorsi@redhat.com"]
   s.homepage    = "https://github.com/bundlerext/bundler_ext"
   s.summary     = "Load system gems via Bundler DSL"
   s.description = "Simple library leveraging the Bundler Gemfile DSL to load gems already on the system and managed by the systems package manager (like yum/apt)"
