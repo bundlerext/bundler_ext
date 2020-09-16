@@ -141,7 +141,7 @@ module BundlerExt
 
     describe "add_spec" do
       around(:each) do |spec|
-        orig = $LOAD_PATH
+        orig = $LOAD_PATH.dup
         spec.run
 
         # XXX need to restore this way else we'll get an err:
@@ -150,9 +150,11 @@ module BundlerExt
         orig.each { |o| $LOAD_PATH << o }
       end
 
+      # XXX needed to require rubygems/ext/builder in with Bundler 1.8.1+.
+      let!(:runtime) { described_class.new.tap {|c| c.rubygems} }
+
       it "marks spec as loaded" do
         spec = Gem::Specification.new
-        runtime = described_class.new
         runtime.rubygems.should_receive(:mark_loaded).with(spec)
         runtime.add_spec(spec)
       end
@@ -160,7 +162,6 @@ module BundlerExt
       it "adds spec load paths not already on LOAD_PATH to it" do
         $LOAD_PATH.clear
         spec = Gem::Specification.new :load_paths => ['foo']
-        runtime = described_class.new
         runtime.add_spec(spec)
         $LOAD_PATH.should include(*spec.load_paths)
       end
@@ -169,7 +170,6 @@ module BundlerExt
         spec = Gem::Specification.new :load_paths => ['foo']
         $LOAD_PATH.clear
         $LOAD_PATH << spec.load_paths.first
-        runtime = described_class.new
         runtime.add_spec(spec)
         $LOAD_PATH.size.should == 1
       end
