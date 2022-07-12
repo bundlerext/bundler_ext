@@ -118,7 +118,7 @@ module BundlerExt
 
         context "namespaced file is nil" do
           it "outputs strict error" do
-            expected = 'Gem loading error: cannot load such file -- file1'
+            expected = /^Gem loading error: cannot load such file -- file1($|\nDid you mean\?  )/
             expect(Output).to receive(:strict_err).with(expected)
 
             expect(described_class).to receive(:namespaced_file).with('file1').
