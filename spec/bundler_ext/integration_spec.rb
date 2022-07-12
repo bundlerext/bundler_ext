@@ -24,46 +24,46 @@ end
       describe "with no group passed in" do
         it "should return nothing to require" do
           libs = BundlerExt::Gemfile.parse(@gemfile)
-          libs.should be_an(Hash)
-          libs.keys.should_not include('deltacloud-client')
-          libs.keys.should_not include('vcr')
+          expect(libs).to be_an(Hash)
+          expect(libs.keys).to_not include('deltacloud-client')
+          expect(libs.keys).to_not include('vcr')
         end
       end
       describe "with :all passed in" do
         it "should return the list of system libraries in all groups to require" do
           libs = BundlerExt::Gemfile.parse(@gemfile, :all)
-          libs.should be_an(Hash)
-          libs.keys.should include('deltacloud-client')
-          libs['deltacloud-client'][:files].should == ['deltacloud']
-          libs.keys.should include('vcr')
+          expect(libs).to be_an(Hash)
+          expect(libs.keys).to include('deltacloud-client')
+          expect(libs['deltacloud-client'][:files]).to eq(['deltacloud'])
+          expect(libs.keys).to include('vcr')
         end
       end
       describe "with group passed in" do
         it "should not return any deps that are not in the 'development' group" do
           libs = BundlerExt::Gemfile.parse(@gemfile,'development')
-          libs.should be_an(Hash)
-          libs.keys.should_not include('deltacloud-client')
+          expect(libs).to be_an(Hash)
+          expect(libs.keys).to_not include('deltacloud-client')
         end
         it "should return only deps that are in the :test group" do
           libs = BundlerExt::Gemfile.parse(@gemfile, :test)
-          libs.should be_an(Hash)
-          libs.keys.should_not include('deltacloud-client')
-          libs.keys.should include('vcr')
+          expect(libs).to be_an(Hash)
+          expect(libs.keys).to_not include('deltacloud-client')
+          expect(libs.keys).to include('vcr')
         end
         it "should return deps from both the :default and :test groups" do
           libs = BundlerExt::Gemfile.parse(@gemfile, :default, :test)
-          libs.should be_an(Hash)
-          libs.keys.should include('deltacloud-client')
-          libs.keys.should include('vcr')
+          expect(libs).to be_an(Hash)
+          expect(libs.keys).to include('deltacloud-client')
+          expect(libs.keys).to include('vcr')
         end
       end
       it "should only return deps for the current platform" do
         libs = BundlerExt::Gemfile.parse(@gemfile)
-        libs.should be_an(Hash)
+        expect(libs).to be_an(Hash)
         if RUBY_VERSION < "1.9"
-          libs.keys.should_not include('cinch')
+          expect(libs.keys).to_not include('cinch')
         else
-          libs.keys.should_not include('fastercsv')
+          expect(libs.keys).to_not include('fastercsv')
         end
       end
     end
@@ -75,38 +75,38 @@ end
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BEXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
-        defined?(Gem).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
 
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
-        defined?(Gem).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
 
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BEXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile, :fail)
-        defined?(Gem).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
 
       it "non-strict mode should load the libraries in the gemfile" do
         ENV['BUNDLER_EXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile, :fail)
-        defined?(Gem).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
       it "non-strict mode should load the libraries using env var list" do
         ENV['BEXT_GROUPS'] = 'test development blah'
         ENV['BEXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
-        defined?(Gem::Command).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
 
       it "non-strict mode should load the libraries using env var list" do
         ENV['BUNLDER_EXT_GROUPS'] = 'test development blah'
         ENV['BEXT_NOSTRICT'] = 'true'
         BundlerExt.system_require(@gemfile)
-        defined?(Gem::Command).should be_true
+        expect(defined?(Gem)).to be_truthy
       end
 
       unless skip_system
@@ -120,11 +120,11 @@ end
             gems = BundlerExt::Gemfile.parse(@gemfile, :all)
             gems.each { |gem,gdep|
               version = rand(100)
-              BundlerExt::System.should_receive(:system_name_for).with(gem).
+              expect(BundlerExt::System).to receive(:system_name_for).with(gem).
                          and_return(gem)
-              BundlerExt::System.should_receive(:system_version_for).with(gem).
+              expect(BundlerExt::System).to receive(:system_version_for).with(gem).
                          and_return(version)
-              BundlerExt::System.should_receive(:gem).with(gem, "=#{version}")
+              expect(BundlerExt::System).to receive(:gem).with(gem, "=#{version}")
             }
             BundlerExt.system_require(@gemfile, :all)
           end
@@ -134,7 +134,7 @@ end
               ENV['BEXT_PKG_PREFIX'] = 'rubygem-'
               gems = BundlerExt::Gemfile.parse(@gemfile, :all)
               gems.each { |gem,gdep|
-                BundlerExt::System.should_receive(:system_version_for).with("rubygem-#{gem}").
+                expect(BundlerExt::System).to receive(:system_version_for).with("rubygem-#{gem}").
                            and_return('0')
               }
               BundlerExt.system_require(@gemfile, :all)
