@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.requirements = ['Install the linux_admin gem and set BEXT_ACTIVATE_VERSIONS to true to activate rpm/deb installed gems']
 
   s.add_development_dependency('rspec', '>=1.3.0')
+  s.add_development_dependency('rake', '>= 12', '< 14')
 end
