@@ -69,7 +69,8 @@ end
     end
     describe "#system_require" do
       it "strict mode should fail loading non existing gem" do
-        expect { BundlerExt.system_require(@gemfile, :fail) }.to raise_error
+        expect { BundlerExt.system_require(@gemfile, :fail) }.
+          to raise_error(RuntimeError, 'Gem loading error: cannot load such file -- not_existing_gem')
       end
 
       it "non-strict mode should load the libraries in the gemfile" do
