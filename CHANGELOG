@@ -1,3 +1,28 @@
+====== version 0.4.2 =========
+
+Vít Ondruch (2020-09-16)
+  - Fix Bundler 1.8.1+ test failures
+
+Ewoud Kohl van Wijngaarden (2022-07-12)
+  - Update test suite to rspec 3
+  - Correct expectations for modern Bundler output
+  - Add CI using GitHub Actions
+
+====== version 0.4.1 =========
+
+Lukas Zapletal (2014-06-09)
+  - Fix loading of namespaced gems
+  - Add BEXT_VERBOSE environment variable
+
+====== version 0.4.0 =========
+
+Mo Morsi (2013-12-19)
+  - Refactored into smaller modules
+  - Drop linux_admin dependency
+  - Add BundlerExt#system_setup analogous to Bundler#setup
+  - Update README
+  - Improve test coverage
+
 ====== version 0.3.2 =========
 
 Mo Morsi (2013-11-19) 
