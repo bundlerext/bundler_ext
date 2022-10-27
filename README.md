@@ -8,13 +8,13 @@ on the system and those managed by the systems package manager
 ### API ###
 
 - BundlerExt#system_require is analogous to
-  [Bundler#require](http://rubydoc.info/github/bundler/bundler/Bundler#require-class_method)
+  [Bundler#require](https://rubydoc.info/gems/bundler/Bundler.require)
   and will auto-require the gems loaded in the Gemfile wherever they
   are installed / can be found.
   
   
 - BundlerExt#system_setup is analogous to
-  [Bundler#setup](http://bundler.io/v1.5/bundler_setup.html)
+  [Bundler#setup](https://bundler.io/guides/bundler_setup.html)
   and will setup the Ruby LOAD_PATH to only incorporate the gemfile
   dependency include paths wherever they are installed.
   
